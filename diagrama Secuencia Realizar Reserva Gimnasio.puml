@@ -1,0 +1,34 @@
+@startuml
+actor Main
+Main -> CentroDeportivo: registrarReserva(int idCliente, String idInstalacion, Date fechaReserva): Reserva
+activate CentroDeportivo
+CentroDeportivo -> CentroDeportivo: buscarCliente(int idCliente): Cliente
+CentroDeportivo -> CentroDeportivo: buscarInstalacion(String idInstalacion): Instalacion
+CentroDeportivo -> CentroDeportivo: getCapacidadDisponible(String idInstalacion, Date fechaReserva): int
+CentroDeportivo -> Cliente: generarReserva(Instalacion instalacion, Date fecha): Reserva
+activate Cliente
+Cliente -> Cliente: tieneReservaPendiente(): boolean
+alt no tiene reservas pendientes
+    CentroDeportivo -> Instalacion: getCapacidadMaxima(): int
+    alt capacidad disponible
+        Instalacion -> Gimnasio: calcularPrecio(): double
+        activate Gimnasio
+        Gimnasio --> Reserva: precio: double
+        deactivate Gimnasio
+        Cliente -> Reserva: generarReserva(Instalacion instalacion, Date fecha): Reserva
+        activate Reserva
+        Reserva --> Cliente: Reserva
+        Cliente -> Cliente: agregarReserva(Reserva reserva): void
+        Cliente --> CentroDeportivo: Reserva
+        CentroDeportivo -> CentroDeportivo: agregarReserva(Reserva reserva): void
+        CentroDeportivo --> Main: Reserva
+    else capacidad excedida
+        CentroDeportivo --> Main: ExcepcionCapacidadExcedida
+    end
+else tiene reservas pendientes
+    Cliente --> CentroDeportivo: ExcepcionReservaPendiente
+    CentroDeportivo --> Main: ExcepcionReservaPendiente
+end
+deactivate Cliente
+deactivate CentroDeportivo
+@enduml

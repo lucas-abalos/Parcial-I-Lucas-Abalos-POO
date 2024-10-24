@@ -1,0 +1,73 @@
+@startuml centroDeportivo
+skinparam classAttributeIconSize 0
+
+class CentroDeportivo{
+- instancia: CentroDeportivo
+- clientes : List<Cliente>
+- instalaciones: List<Instalacion>
+- reservas: List<Reserva>
+- buscarCliente(int idCliente): Cliente
+- buscarInstalacion(String idInstalacion): Instalacion
+- getCapacidadDisponible(String idInstalacion): int
+- agregarReserva(int idCliente, String idInstalacion, Date fecha): Reserva
++ getInstancia(): CentroDeportivo
++ agregarCliente(int idCliente, String nombre, String apellido): Cliente
++ agregarPileta(String idInstalacion, int capacidadMaxima, String ubicacion, int metros): Pileta
++ agregarGimnasio(String idInstalacion, int capacidadMaxima, String ubicacion, int cantMaquinas): Gimnasio
++ agregarSalaYoga(String idInstalacion, int capacidadMaxima, String ubicacion): SalaYoga
+}
+
+abstract class Instalacion{
+- idInstalacion: String
+- clientes : List<Cliente>
+- capacidadMaxima: int
+- ubicacion: String
++ getCapacidadMaxima(): int
+}
+
+class Pileta{
+- metros: int
++ calcularPrecio(): double
+}
+
+class Gimnasio{
+- cantMaquinas : int
++ calcularPrecio(): double
+}
+
+class SalaYoga{
++ calcularPrecio(): double
+}
+
+class Cliente{
+- idCliente: int
+- nombre: String
+- apellido: String
+- Reservas: List<Reserva>
++ generarReserva(Instalacion instalacion, Date fecha): Reserva
+}
+
+Enum Estado{
+    Pendiente
+    Utilizada
+    No Utilizada
+}
+
+class Reserva{
+- cliente: Cliente
+- instalacion: Instalacion
+- fecha: Date
+- precio: double
+- estado: Estado
++ getEstado(): String
+}
+
+CentroDeportivo "1" *-- "*" Cliente
+CentroDeportivo "1" *-- "*" Instalacion
+Cliente "1" o--o "*" Reserva
+Estado -> Reserva
+Instalacion <|-- Pileta
+Instalacion <|-- Gimnasio
+Instalacion <|-- SalaYoga
+
+@enduml
